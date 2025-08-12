@@ -2,25 +2,6 @@
 
 #include <stdarg.h>
 
-
-class Log {
-
-    public:
-        const int LogLevelInfo = 0;
-        const int LogLevelWarninig = 1;
-        const int LogLevelError = 2;
-    private:
-        int m_logLevel;
-    public:
-        void warn(char *msg) {
-            std::cout << "Warning: " << msg << std::endl;
-        }
-        void error(void *errMsg) {
-            std::cerr<<  "Error: " << errMsg << std::endl;
-
-        }
-};
-
 class Player {
 
 public:
@@ -42,6 +23,11 @@ public:
     Player() {
         Player::playerCount++;
     }
+
+    Player(int defX, int defY) {
+        x = defX;
+        y = defY;
+    }
     
     static int getPlayerCount() {
         return Player::playerCount;
@@ -49,7 +35,7 @@ public:
 };
 
 int Player::playerCount = 0;
-
+void free(void *__ptr);
 int main() {
     Player *player = new Player();
     player->x = 0;
@@ -57,8 +43,10 @@ int main() {
     player->speed = 1.0;
     player->changeCoordinates(10, 104);
     player->displayData();
-    std::cout << Player::getPlayerCount();
+    std::cout << Player::getPlayerCount() << std::endl;
     delete player;
+    player = new Player(1, 5);
+    free(player);
     return 0;
 }
 

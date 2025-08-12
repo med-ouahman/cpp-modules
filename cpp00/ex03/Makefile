@@ -1,7 +1,7 @@
 # create makefile for the project
 # This Makefile is used to build the project and manage dependencies	
 CC = c++
-CFLAGS = -Wall -Wextra -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 SRCS = iostream.cpp classes.cpp
 OBJS = $(SRCS:.cpp=.o)
