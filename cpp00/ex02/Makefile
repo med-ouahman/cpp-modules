@@ -1,10 +1,8 @@
 CC = c++ -Wall -Wextra -Werror -std=c++98
 
+SRC = Account.cpp tests.cpp
 
-src = Account.cpp test.cpp
-
-
-obj = $(src:.cpp=.o)
+OBJ = $(SRC:.cpp=.o)
 
 NAME = account
 
@@ -13,15 +11,14 @@ all: $(NAME)
 %.o: %.cpp
 	$(CC) -c $< -o $@
 
-
-$(NAME): $(obj)
-	$(CC) -o $(NAME) $(obj)
+$(NAME): $(OBJ)
+	$(CC) -o $(NAME) $(OBJ)
 
 clean:
-	rm -f $(obj) $(NAME)
+	rm -f $(OBJ) $(NAME)
 
 fclean:
-	rm -f $(obj) $(NAME)
+	rm -f $(OBJ) $(NAME)
 
 re: clean fclean all
 

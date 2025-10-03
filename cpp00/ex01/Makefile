@@ -1,5 +1,4 @@
-CC = g++ -Wall -Wextra -std=c++11
-
+CC = c++ -Wall -Wextra -Werror -std=c++11
 
 src = phonebook.cpp
 

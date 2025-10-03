@@ -1,14 +1,15 @@
 CC = c++
 
+CC = g++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = program
+NAME = fixed
 
-SRCS = main.cpp
+SRCS = main.cpp Fixed.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
-%,o: %.cpp
+%.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 all: $(NAME)

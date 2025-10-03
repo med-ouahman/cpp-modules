@@ -1,16 +1,12 @@
 #include <iostream>
+#include <cstring>
 
-char toupper(char c) {
-    if (c >= 'a' && c <= 'z') {
-        return c - ('a' - 'A');
-    }
-    return c;
-}
+void printUpper(std::string str) {
+    char c;
 
-void printUpper(char *string) {
-     
-    for (int i = 0; string[i]; ++i) {
-        std::cout << toupper(string[i]);
+    for (int i = 0; str[i]; ++i) {
+        c = toupper(str[i]);
+        std::cout << c;
     }
 }
 
@@ -22,6 +18,8 @@ int main(int ac, char **av) {
     }
     for (int i = 1; i < ac; i++) {
         printUpper(av[i]);
+        if (i < ac - 1)
+            std::cout << " ";
     }
     std::cout << std::endl;
     return 0;

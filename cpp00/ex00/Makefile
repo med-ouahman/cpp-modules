@@ -1,16 +1,25 @@
-compiler = g++ -Wall -Wextra -Werror
+CPP = c++ -Wall -Wextra -Werror
 
-src = megaphone.c
+src = megaphone.cpp
 
 NAME = megaphone
 
-obj = megaphone.o
-
-%.o: %c
-	$(compiler) -c $(src) -o $(obj)
+OBJ = $(src:.cpp=.o)
 
 all: $(NAME)
 
-$(NAME): $(obj)
-	$(compiler) $(obj) -o $(NAME)
+%.o: %.cpp
+	$(CPP) -c $< -o $@
 
+$(NAME): $(OBJ)
+	$(CPP) $(OBJ) -o $(NAME)
+
+clean:
+	rm -f $(OBJ)
+
+fclean: clean
+	rm -f $(NAME)
+
+re: fclean all
+
+.PHONY: all clean fclean re

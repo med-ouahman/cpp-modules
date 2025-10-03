@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 # define ADD "ADD"
 # define SEARCH "SEARCH"
@@ -7,15 +8,15 @@
 
 # define MAX_CONTACT 8
 
-using namespace std;
+int eofErr;
 
 class Contact {
     public:
-        string firstName;
-        string lastName;
-        string nickName;
-        string phoneNumber;
-        string darkestSecret;
+        std::string firstName;
+        std::string lastName;
+        std::string nickName;
+        std::string phoneNumber;
+        std::string darkestSecret;
 };
 
 class PhoneBook {
@@ -36,102 +37,139 @@ Contact createContact() {
 
     Contact newContact;
 
-    cout << "First name: ";
-    cin >> newContact.firstName;
-    cout << "Last name: ";
-    cin >> newContact.lastName;
-    cout << "Nickname: ";
-    cin >> newContact.nickName;
-    cout << "Phone number: ";
-    cin >> newContact.phoneNumber;
-    cout << "Darkest secret: ";
-    cin >> newContact.darkestSecret;
+    std::cout << "First name:\n";
+    
+    if (!(std::getline(std::cin, newContact.firstName))) {
+        eofErr = 1;
+        return newContact;
+    }
+    std::cout << "Last name:\n";
+    if (!(std::getline(std::cin, newContact.lastName))) {
+        eofErr = 1;
+        return newContact;
+    }
+    std::cout << "Nickname:\n";
+    if (!(std::getline(std::cin, newContact.nickName))) {
+        eofErr = 1;
+        return newContact;
+    }
+    std::cout << "Phone number:\n";
+    if (!(std::getline(std::cin, newContact.phoneNumber))) {
+        eofErr = 1;
+        return newContact;
+    }
+    std::cout << "Darkest secret:\n";
+    if (!(std::getline(std::cin, newContact.darkestSecret))) {
+        eofErr = 1;
+    }
     return newContact;
 }
 
-void printTen(string s) {
+void printTrunc(std::string s) {
     
-    size_t len = s.length();
-    if (len <= 10) {
-        while (len <= 10) {
-            cout << " ";
-            len++;
-        }
-        cout << s;
+    if (s.length() >= 10) {
+        std::cout << std::setw(10) << s.substr(0, 10) << ".";
     } else {
-        for (size_t i = 0; i < 9; i++) {
-            cout << s[i];
-        }
-        cout << ".";
+        std::cout << std::setw(10) << s;   
     }
 }
 
 void displayEntry(Contact contact) {
-    cout << contact.firstName << "\n";
-    cout << contact.lastName << "\n";
-    cout << contact.nickName << "\n";
-    cout << contact.phoneNumber << "\n";
-    cout << contact.darkestSecret << "\n";
+    std::cout << contact.firstName << "\n";
+    std::cout << contact.lastName << "\n";
+    std::cout << contact.nickName << "\n";
+    std::cout << contact.phoneNumber << "\n";
+    std::cout << contact.darkestSecret << "\n";
 }
 
 void displayContact(Contact c, int i) {
     
-    for (int j = 0; j < 9; j++) cout << " ";
-    cout << i << "|";
-    printTen(c.firstName);
-    cout << "|";
-    printTen(c.lastName);
-    cout << "|";
-    printTen(c.nickName);
+    std::cout << std::setw(10) << i;
+    std::cout << "|";
+    printTrunc(c.firstName);
+    std::cout << "|";
+    printTrunc(c.lastName);
+    std::cout << "|";
+    printTrunc(c.nickName);
+    std::cout << "|";
+}
+
+int getNum(int *num) {
+    std::string s;
+
+    if (!std::getline(std::cin, s)) {
+        return 0;
+    }
+    try {
+        *num = std::stoi(s);
+    } catch (std::exception e) {
+       return -1;
+    }
+    return 1;
 }
 
 void displayContacts(PhoneBook phoneBook) {
 
-    int display;
-
-    if (phoneBook.contactCount == 0)
-        cout << "You don't have contacts now, Enter ADD to add them\n";
+    int index = -1;
+    if (phoneBook.contactCount == 0) {
+        std::cout << "You don't have contacts now, Enter ADD to add them\n";
+        return ;
+    }
     for (int i = 0; i < phoneBook.contactCount; i++) {
         displayContact(phoneBook.contacts[i], i);
-        cout << "\n";
+        std::cout << std::endl;
     }
-    cout << "Enter the index of the contact: ";
-    cin >> display;
-    while (display >= phoneBook.contactCount || display < 0) {
-        cout << "No such entry\n" << "Enter the index of the contact: ";
-        cin >> display;
+    std::cout << "Enter the index of the contact:\n";
+    if (!getNum(&index)) {
+        eofErr = 1;
+        return ;
     }
-    displayEntry(phoneBook.contacts[display]);
+    while (index >= phoneBook.contactCount || index < 0) {
+        std::cout << "No such entry\nEnter the index of the contact:\n";
+        if (!getNum(&index)) {
+            eofErr = 1;
+            return ;
+        }
+    }
+    displayEntry(phoneBook.contacts[index]);
 }
 
 int main() {
-    string command;
-
+    std::string command;
     PhoneBook phoneBook;
     Contact contact;
+    eofErr = 0;
 
     while (true) {
-        cout << "Enter a command: options: (ADD, SEARCH, EXIT): ";
-        
-        cin >> command;
+        std::cout << "Enter a command: options: (ADD, SEARCH, EXIT):\n";
+        if (!std::getline(std::cin, command)) {
+            break;
+        }
         if (command == ADD) {
             contact = createContact();
+            if (eofErr)
+                break;
             if (contact.firstName.empty()
                 || contact.lastName.empty()
                 || contact.nickName.empty()
                 || contact.darkestSecret.empty()) {
-                    cout << "Cannot create a contact with an empty field, try again.\n";
+                    std::cout << "Cannot create a contact with an empty field, try again.\n";
                     continue; 
-                }
+            }
             phoneBook.addContact(contact);
         } else if (command == SEARCH) {
             displayContacts(phoneBook);
-
-        } else if (command == EXIT)
+            if (eofErr) {
+                break;
+            }
+        } else if (command == EXIT) {
             break;
+        }
     }
-    cout << "Exiting the phonebook application.\n";
-    cout << "Goodbye!\n";
-    cin.clear();
+    if (eofErr)
+        std::cout << "\n";
+    std::cout << "Exiting the phonebook application.\n";
+    std::cout << "Goodbye!" << std::endl;
+    std::cin.clear();
     return 0;
 }

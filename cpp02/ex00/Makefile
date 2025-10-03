@@ -4,11 +4,11 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = program
 
-SRCS = main.cpp
+SRCS = main.cpp Fixed.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
-%,o: %.cpp
+%.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 all: $(NAME)
