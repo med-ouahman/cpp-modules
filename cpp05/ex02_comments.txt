@@ -1,0 +1,70 @@
+============================================================
+  EXERCISE 02 — COMMENTS & EXPLANATIONS
+  No, you need form 28B, not 28C...
+============================================================
+
+GOAL
+----
+Introduce abstract classes and polymorphism. Form is renamed AForm and
+gains a pure virtual executeAction(). Three concrete subclasses each
+implement their own action. The base class's execute() checks preconditions
+centrally so subclasses stay focused on their unique behaviour.
+
+CONCEPTS USED
+-------------
+
+1. Abstract class (pure virtual method)
+   AForm declares:
+       virtual void executeAction() const = 0;
+   This makes AForm abstract — it cannot be instantiated directly.
+   Every concrete subclass MUST override executeAction(), or it too
+   becomes abstract.
+
+2. Template Method pattern
+   AForm::execute() is the public entry point. It checks two conditions:
+   a) the form must be signed (_signed == true)
+   b) the executor's grade must be <= _gradeToExec (integer ≤ means rank ≥)
+   If both pass, it calls the pure virtual executeAction(). This is the
+   Template Method pattern: the base class defines the algorithm skeleton;
+   subclasses supply the variable part. Validation logic lives in exactly
+   one place.
+
+3. FormNotSignedException
+   A third nested exception added to AForm. Thrown by execute() when
+   someone tries to execute an unsigned form. The what() message clearly
+   distinguishes it from grade errors.
+
+4. Inheritance and constructor chaining
+   Each concrete form's constructor calls AForm's constructor via the
+   member-initialiser list, passing the hardcoded grades:
+       ShrubberyCreationForm::ShrubberyCreationForm(...)
+           : AForm("ShrubberyCreationForm", 145, 137), _target(target) {}
+   This ensures AForm's grade validation runs on construction.
+
+5. ShrubberyCreationForm
+   Writes two ASCII trees to a file named <target>_shrubbery.
+   Uses std::ofstream (from <fstream>), which is allowed in C++98.
+
+6. RobotomyRequestForm
+   Uses std::rand() seeded with std::time(0) for 50/50 success.
+   Note: seeding inside executeAction() means each call gets a
+   different seed — acceptable for this exercise.
+
+7. PresidentialPardonForm
+   Simplest of the three: just prints a message. Grade requirements
+   are the strictest (sign 25, exec 5), meaning only top bureaucrats
+   can use it.
+
+8. executeForm() in Bureaucrat
+   Mirrors signForm(): calls form.execute(*this), catches any exception,
+   and prints either a success or failure message.
+
+KEY DECISIONS
+-------------
+- Validation in execute() (base class) rather than in each concrete class
+  avoids code duplication and is the more elegant design the subject hints at.
+- virtual destructor on AForm is mandatory whenever a class is used
+  polymorphically. Without it, deleting a derived object through an AForm*
+  would cause undefined behaviour (only AForm's destructor would run).
+- _target is stored in each concrete class (not AForm) because AForm does
+  not know about form-specific data. The base class stays generic.

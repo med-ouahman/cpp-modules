@@ -1,0 +1,58 @@
+============================================================
+  EXERCISE 01 — COMMENTS & EXPLANATIONS
+  Form up, maggots!
+============================================================
+
+GOAL
+----
+Introduce inter-class collaboration and exception propagation.
+A Form object knows what grade a Bureaucrat needs to sign or execute it.
+The Bureaucrat's signForm() acts as a mediator: it calls Form::beSigned()
+and translates any thrown exception into a readable console message.
+
+CONCEPTS USED
+-------------
+
+1. Forward declaration
+   Form.hpp forward-declares Bureaucrat (class Bureaucrat;) and
+   Bureaucrat.hpp forward-declares Form (class Form;).
+   This breaks the circular include dependency: neither header needs
+   to include the other — only the .cpp files do, where the full
+   class definitions are required.
+
+2. Multiple const members in Form
+   _name, _gradeToSign, _gradeToExec are all const. Like Bureaucrat's
+   _name, they must be set in the member-initialiser list and cannot
+   be re-assigned in operator=. Only _signed is mutable.
+
+3. beSigned(const Bureaucrat& b)
+   The logic is: if b.getGrade() > _gradeToSign, the bureaucrat's rank
+   is too low (remember: lower number = higher rank). Throws
+   Form::GradeTooLowException in that case.
+   On success, sets _signed = true.
+
+4. signForm(Form& f) in Bureaucrat
+   Calls f.beSigned(*this) inside a try/catch block.
+   - On success: prints "<name> signed <form_name>"
+   - On failure: prints "<name> couldn't sign <form_name> because <what>"
+   This wrapping pattern isolates exception handling at the call site
+   and keeps Form::beSigned() focused on a single responsibility.
+
+5. operator<< for Form
+   Prints all four attributes: name, signed status, gradeToSign, gradeToExec.
+   Useful for debugging and verification during tests.
+
+6. Grade comparison direction reminder
+   b.getGrade() <= _gradeToSign means the bureaucrat is qualified.
+   Equivalently, b.getGrade() > _gradeToSign means NOT qualified
+   (i.e. integer value is larger = lower rank).
+
+KEY DECISIONS
+-------------
+- Form::operator= only copies _signed because the other three members
+  are const — they were set at construction and define the form's identity.
+- GradeTooHighException / GradeTooLowException are re-defined on Form
+  separately from Bureaucrat. They happen to have the same messages but
+  they are distinct types, which matters for catch specificity.
+- beSigned does NOT check whether the form is already signed. Signing
+  an already-signed form is silently idempotent (sets _signed = true again).

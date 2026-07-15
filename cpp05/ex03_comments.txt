@@ -1,0 +1,65 @@
+============================================================
+  EXERCISE 03 — COMMENTS & EXPLANATIONS
+  At least this beats coffee-making
+============================================================
+
+GOAL
+----
+Implement an Intern class whose makeForm() creates any of the three AForm
+subclasses by name, without using a chain of if/else if. The subject
+explicitly warns against messy branching — a lookup table is the expected
+elegant solution.
+
+CONCEPTS USED
+-------------
+
+1. Lookup table with function pointers
+   Three file-scope static factory functions are defined (makeShrubbery,
+   makeRobotomy, makePardon). Each takes a const std::string& target and
+   returns a heap-allocated AForm*.
+
+   Inside makeForm(), two parallel arrays (names[] and factories[]) are
+   declared as static locals:
+       static const std::string names[3]       = { ... };
+       static const FormFactory factories[3]   = { ... };
+
+   A single for-loop walks both arrays simultaneously. When names[i]
+   matches the requested form name, factories[i](target) is called and
+   the result is returned. This is the canonical C++98 alternative to
+   switch-on-string.
+
+   typedef AForm* (*FormFactory)(const std::string&);
+   This typedef names the function pointer type, making the arrays readable.
+
+2. Why not if/else?
+   An if/else chain is O(n) to read AND to maintain: adding a new form
+   means finding the chain and inserting a new branch. The lookup table
+   isolates each form to one entry in each array — open for extension,
+   minimal coupling, no repetition.
+
+3. Intern OCF
+   The Intern has no state, so all OCF members are trivial (empty body or
+   default behaviour). Still required by the general rules.
+
+4. Heap allocation and ownership
+   makeForm() returns a raw AForm* allocated with new. The caller is
+   responsible for calling delete. In main(), each pointer is deleted
+   explicitly after use. A real codebase would use smart pointers
+   (C++11), but those are not available here.
+
+5. NULL return on unknown name
+   If no name matches, makeForm() prints an error to std::cerr and
+   returns NULL. The caller must check the pointer before dereferencing.
+
+6. Static local arrays
+   Declaring names[] and factories[] as static inside the function means
+   they are initialised once at first call and shared across all Intern
+   instances. This is safe and efficient for read-only lookup data.
+
+WHAT WOULD CHANGE IN MODERN C++
+--------------------------------
+- std::map<std::string, std::function<AForm*(const std::string&)>> could
+  replace the parallel arrays.
+- std::unique_ptr<AForm> would replace raw AForm*, eliminating the need
+  for manual delete.
+- But all of these require C++11 or later, which is forbidden here.

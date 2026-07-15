@@ -1,0 +1,56 @@
+============================================================
+  EXERCISE 00 — COMMENTS & EXPLANATIONS
+  Mommy, when I grow up, I want to be a bureaucrat!
+============================================================
+
+GOAL
+----
+Introduce C++ exceptions through a class with constrained invariants.
+The Bureaucrat has a name (const) and a grade (1–150). Any violation
+of those bounds must throw a custom exception derived from std::exception.
+
+CONCEPTS USED
+-------------
+
+1. Orthodox Canonical Form (OCF)
+   Every non-exception class must provide:
+   - Default or parameterised constructor
+   - Copy constructor
+   - Copy assignment operator
+   - Destructor
+   This is mandatory from Module 02 onward.
+
+2. Nested exception classes
+   GradeTooHighException and GradeTooLowException are declared inside
+   Bureaucrat as nested classes. They inherit std::exception and override
+   what() with the 'throw()' empty exception specifier (C++98 style).
+   Note: exception classes themselves do NOT need to follow OCF.
+
+3. const member (const std::string _name)
+   A const data member can only be initialised in the member-initialiser
+   list of the constructor, never assigned later. The copy assignment
+   operator therefore cannot copy the name — only the mutable grade.
+
+4. Grade direction
+   Grade 1 is HIGHEST, grade 150 is LOWEST.
+   incrementGrade() decreases the integer value (e.g. 3 → 2).
+   decrementGrade() increases the integer value (e.g. 3 → 4).
+   Both throw if the resulting value would leave [1, 150].
+
+5. operator<< overload (non-member)
+   Declared as a free function outside the class, takes an ostream& and
+   a const Bureaucrat& ref. Returns the stream so chaining works.
+   Output format: "<name>, bureaucrat grade <grade>."
+
+6. try / catch with std::exception&
+   All exception handling uses catch(std::exception& e) so any class
+   derived from std::exception is caught polymorphically.
+
+KEY DECISIONS
+-------------
+- The grade is validated in the constructor initialiser list body, not
+  before construction, which is idiomatic C++.
+- incrementGrade / decrementGrade check the *resulting* value, not the
+  current one, to keep the logic readable.
+- The assignment operator skips the const _name member intentionally;
+  only _grade is mutable after construction.
