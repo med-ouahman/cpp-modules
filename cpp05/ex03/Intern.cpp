@@ -5,27 +5,26 @@
 #include <iostream>
 
 Intern::Intern() {}
+
 Intern::Intern(const Intern&) {}
+
 Intern& Intern::operator=(const Intern&) { return *this; }
+
 Intern::~Intern() {}
 
-static AForm* makeShrubbery(const std::string& target)
-{
+static AForm* makeShrubbery(const std::string& target) {
     return new ShrubberyCreationForm(target);
 }
 
-static AForm* makeRobotomy(const std::string& target)
-{
+static AForm* makeRobotomy(const std::string& target) {
     return new RobotomyRequestForm(target);
 }
 
-static AForm* makePardon(const std::string& target)
-{
+static AForm* makePardon(const std::string& target) {
     return new PresidentialPardonForm(target);
 }
 
-AForm* Intern::makeForm(const std::string& formName, const std::string& target) const
-{
+AForm* Intern::makeForm(const std::string& formName, const std::string& target) const {
     typedef AForm* (*FormFactory)(const std::string&);
 
     static const std::string names[3] = {
