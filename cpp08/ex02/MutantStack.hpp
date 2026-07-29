@@ -5,8 +5,7 @@
 #include <deque>
 
 template <typename T, typename Container = std::deque<T> >
-class MutantStack : public std::stack<T, Container>
-{
+class MutantStack : public std::stack<T, Container> {
 public:
     MutantStack() {}
 

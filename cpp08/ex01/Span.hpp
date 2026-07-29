@@ -7,8 +7,7 @@
 #include <algorithm>
 #include <numeric>
 
-class Span
-{
+class Span {
 public:
     Span(unsigned int n);
     Span(const Span &other);
@@ -18,8 +17,7 @@ public:
     void addNumber(int n);
 
     template <typename InputIterator>
-    void addNumbers(InputIterator begin, InputIterator end)
-    {
+    void addNumbers(InputIterator begin, InputIterator end) {
         size_t count = static_cast<size_t>(std::distance(begin, end));
         if (_numbers.size() + count > _maxSize)
             throw std::runtime_error("Not enough capacity to add all numbers");

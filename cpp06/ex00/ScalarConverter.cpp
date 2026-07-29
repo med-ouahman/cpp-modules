@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <climits>
 #include <cmath>
-#include <cerrno>
 #include <cstdlib>
 #include <limits>
 
@@ -12,52 +11,45 @@ ScalarConverter::ScalarConverter(const ScalarConverter &) {}
 ScalarConverter &ScalarConverter::operator=(const ScalarConverter &) { return *this; }
 ScalarConverter::~ScalarConverter() {}
 
-static bool isCharLiteral(const std::string &s)
-{
+
+static bool isCharLiteral(const std::string &s) {
 	return s.length() == 3 && s[0] == '\'' && s[2] == '\'';
 }
 
-static bool isPseudoFloat(const std::string &s)
-{
+static bool isPseudoFloat(const std::string &s) {
 	return s == "-inff" || s == "+inff" || s == "nanf";
 }
 
-static bool isPseudoDouble(const std::string &s)
-{
+static bool isPseudoDouble(const std::string &s) {
 	return s == "-inf" || s == "+inf" || s == "nan";
 }
 
-static bool isFloat(const std::string &s)
-{
+static bool isFloat(const std::string &s) {
+
 	if (s.empty() || s[s.size() - 1] != 'f')
 		return false;
 	std::string sub = s.substr(0, s.size() - 1);
 	char *end;
-	errno = 0;
 	strtod(sub.c_str(), &end);
 	return *end == '\0' && end != sub.c_str();
 }
 
-static bool isDouble(const std::string &s)
-{
+static bool isDouble(const std::string &s) {
 	char *end;
-	errno = 0;
+	
 	strtod(s.c_str(), &end);
 	return *end == '\0' && end != s.c_str();
 }
 
-static bool isInt(const std::string &s)
-{
+static bool isInt(const std::string &s) {
 	char *end;
-	errno = 0;
 	long v = strtol(s.c_str(), &end, 10);
 	return *end == '\0' && end != s.c_str()
 		&& v >= static_cast<long>(INT_MIN)
 		&& v <= static_cast<long>(INT_MAX);
 }
 
-static void printChar(double d)
-{
+static void printChar(double d) {
 	if (std::isnan(d) || std::isinf(d) || d < 0 || d > 127)
 		std::cout << "char: impossible" << std::endl;
 	else if (!std::isprint(static_cast<int>(d)))
@@ -66,8 +58,7 @@ static void printChar(double d)
 		std::cout << "char: '" << static_cast<char>(d) << "'" << std::endl;
 }
 
-static void printInt(double d)
-{
+static void printInt(double d) {
 	if (std::isnan(d) || std::isinf(d)
 		|| d < static_cast<double>(INT_MIN)
 		|| d > static_cast<double>(INT_MAX))
@@ -76,8 +67,7 @@ static void printInt(double d)
 		std::cout << "int: " << static_cast<int>(d) << std::endl;
 }
 
-static void printFloat(double d)
-{
+static void printFloat(double d) {
 	float f = static_cast<float>(d);
 	if (std::isnan(f))
 		std::cout << "float: nanf" << std::endl;
@@ -87,8 +77,7 @@ static void printFloat(double d)
 		std::cout << "float: " << std::fixed << std::setprecision(1) << f << "f" << std::endl;
 }
 
-static void printDouble(double d)
-{
+static void printDouble(double d) {
 	if (std::isnan(d))
 		std::cout << "double: nan" << std::endl;
 	else if (std::isinf(d))
@@ -97,8 +86,7 @@ static void printDouble(double d)
 		std::cout << "double: " << std::fixed << std::setprecision(1) << d << std::endl;
 }
 
-void ScalarConverter::convert(const std::string &s)
-{
+void ScalarConverter::convert(const std::string &s) {
 	double d;
 
 	if (isCharLiteral(s)) {
