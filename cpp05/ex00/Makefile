@@ -1,7 +1,11 @@
-NAME    = bureaucrat
 CXX     = c++
+
 CXXFLAGS= -Wall -Wextra -Werror -std=c++98
+
+NAME    = bureaucrat
+
 SRCS    = main.cpp Bureaucrat.cpp
+
 OBJS    = $(SRCS:.cpp=.o)
 
 all: $(NAME)
@@ -18,6 +22,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-
-tests: $(filter-out main.o, $(OBJS)) tests.o
-	$(CXX) $(CXXFLAGS) -o run_tests $(filter-out main.o, $(OBJS)) tests.o

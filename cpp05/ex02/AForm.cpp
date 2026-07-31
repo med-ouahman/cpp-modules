@@ -2,44 +2,44 @@
 #include "Bureaucrat.hpp"
 
 AForm::AForm(const std::string& name, int gradeToSign, int gradeToExec)
-    : _name(name),
-    _signed(false),
-    _gradeToSign(gradeToSign),
-    _gradeToExec(gradeToExec) {
+    : name_(name),
+    signed_(false),
+    signGrade_(gradeToSign),
+    execGrade_(gradeToExec) {
 
-    if (_gradeToSign < 1 || _gradeToExec < 1)
+    if (signGrade_ < 1 || execGrade_ < 1)
         throw GradeTooHighException();
-    if (_gradeToSign > 150 || _gradeToExec > 150)
+    if (signGrade_ > 150 || execGrade_ > 150)
         throw GradeTooLowException();
 }
 
 AForm::AForm(const AForm& other)
-    : _name(other._name), _signed(other._signed),
-      _gradeToSign(other._gradeToSign), _gradeToExec(other._gradeToExec) {}
+    : name_(other.name_), signed_(other.signed_),
+      signGrade_(other.signGrade_), execGrade_(other.execGrade_) {}
 
 AForm& AForm::operator=(const AForm& other) {
     if (this != &other)
-        _signed = other._signed;
+        signed_ = other.signed_;
     return *this;
 }
 
 AForm::~AForm() {}
 
-const std::string& AForm::getName()        const { return _name; }
-bool               AForm::isSigned()       const { return _signed; }
-int                AForm::getGradeToSign() const { return _gradeToSign; }
-int                AForm::getGradeToExec() const { return _gradeToExec; }
+const std::string& AForm::getName()        const { return name_; }
+bool               AForm::isSigned()       const { return signed_; }
+int                AForm::getGradeToSign() const { return signGrade_; }
+int                AForm::getGradeToExec() const { return execGrade_; }
 
 void AForm::beSigned(const Bureaucrat& b) {
-    if (b.getGrade() > _gradeToSign)
+    if (b.getGrade() > signGrade_)
         throw GradeTooLowException();
-    _signed = true;
+    signed_ = true;
 }
 
 void AForm::execute(const Bureaucrat& executor) const {
-    if (!_signed)
+    if (!signed_)
         throw FormNotSignedException();
-    if (executor.getGrade() > _gradeToExec)
+    if (executor.getGrade() > execGrade_)
         throw GradeTooLowException();
     executeAction();
 }

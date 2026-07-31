@@ -1,5 +1,4 @@
-#ifndef BUREAUCRAT_HPP
-#define BUREAUCRAT_HPP
+#pragma once
 
 #include <iostream>
 #include <exception>
@@ -32,10 +31,8 @@ public:
     };
 
 private:
-    const std::string _name;
-    int               _grade;
+    const std::string name_;
+    int               grade_;
 };
 
 std::ostream& operator<<(std::ostream& os, const Bureaucrat& b);
-
-#endif

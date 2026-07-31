@@ -1,5 +1,4 @@
-#ifndef PRESIDENTIALPARDONFORM_HPP
-#define PRESIDENTIALPARDONFORM_HPP
+#pragma once
 
 #include "AForm.hpp"
 #include <string>
@@ -14,7 +13,6 @@ public:
     void executeAction() const;
 
 private:
-    std::string _target;
+    std::string target_;
 };
 
-#endif

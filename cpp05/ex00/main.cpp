@@ -46,8 +46,7 @@ int main()
 
     std::cout << "\n--- Overflow increment ---" << std::endl;
     try {
-        Bureaucrat top("Top", 1);
-        top.incrementGrade();
+        Bureaucrat("Top", 1).incrementGrade();
     }
     catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;
@@ -55,8 +54,7 @@ int main()
 
     std::cout << "\n--- Overflow decrement ---" << std::endl;
     try {
-        Bureaucrat bot("Bot", 150);
-        bot.decrementGrade();
+        Bureaucrat("Bot", 150).decrementGrade();
     }
     catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;

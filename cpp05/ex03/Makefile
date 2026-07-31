@@ -20,6 +20,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-
-tests: $(filter-out main.o, $(OBJS)) tests.o
-	$(CXX) $(CXXFLAGS) -o run_tests $(filter-out main.o, $(OBJS)) tests.o

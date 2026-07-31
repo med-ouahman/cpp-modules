@@ -5,11 +5,11 @@
 
 int main()
 {
-    Intern someRandomIntern;
+    Intern interMilan;
 
     std::cout << "--- Intern creates robotomy request ---" << std::endl;
     {
-        AForm* rrf = someRandomIntern.makeForm("robotomy request", "Bender");
+        AForm* rrf = interMilan.makeForm("robotomy request", "Bender");
         if (rrf) {
             Bureaucrat boss("Boss", 45);
             boss.signForm(*rrf);
@@ -20,7 +20,7 @@ int main()
 
     std::cout << "\n--- Intern creates shrubbery creation ---" << std::endl;
     {
-        AForm* scf = someRandomIntern.makeForm("shrubbery creation", "home");
+        AForm* scf = interMilan.makeForm("shrubbery creation", "home");
         if (scf) {
             Bureaucrat gardener("Gardener", 137);
             gardener.signForm(*scf);
@@ -31,7 +31,7 @@ int main()
 
     std::cout << "\n--- Intern creates presidential pardon ---" << std::endl;
     {
-        AForm* ppf = someRandomIntern.makeForm("presidential pardon", "Marvin");
+        AForm* ppf = interMilan.makeForm("presidential pardon", "Marvin");
         if (ppf) {
             Bureaucrat president("Zaphod", 5);
             president.signForm(*ppf);
@@ -42,7 +42,7 @@ int main()
 
     std::cout << "\n--- Intern given unknown form name ---" << std::endl;
     {
-        AForm* unknown = someRandomIntern.makeForm("form 28C", "whoever");
+        AForm* unknown = interMilan.makeForm("form 28C", "whoever");
         if (!unknown)
             std::cout << "No form was created." << std::endl;
     }

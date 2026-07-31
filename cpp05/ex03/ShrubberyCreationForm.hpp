@@ -1,5 +1,4 @@
-#ifndef SHRUBBERYCREATIONFORM_HPP
-#define SHRUBBERYCREATIONFORM_HPP
+#pragma once
 
 #include "AForm.hpp"
 #include <string>
@@ -14,7 +13,5 @@ public:
     void executeAction() const;
 
 private:
-    std::string _target;
+    std::string target_;
 };
-
-#endif

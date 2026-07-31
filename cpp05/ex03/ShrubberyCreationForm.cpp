@@ -1,7 +1,6 @@
 #include "ShrubberyCreationForm.hpp"
 #include <fstream>
 
-
 static void writeASCIITree(std::ofstream& file) {
     file << "        *        \n";
     file << "       ***       \n";
@@ -15,15 +14,15 @@ static void writeASCIITree(std::ofstream& file) {
 }
 
 ShrubberyCreationForm::ShrubberyCreationForm(const std::string& target)
-    : AForm("ShrubberyCreationForm", 145, 137), _target(target) {}
+    : AForm("ShrubberyCreationForm", 145, 137), target_(target) {}
 
 ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm& other)
-    : AForm(other), _target(other._target) {}
+    : AForm(other), target_(other.target_) {}
 
 ShrubberyCreationForm& ShrubberyCreationForm::operator=(const ShrubberyCreationForm& other) {
     if (this != &other) {
         AForm::operator=(other);
-        _target = other._target;
+        target_ = other.target_;
     }
     return *this;
 }
@@ -31,7 +30,7 @@ ShrubberyCreationForm& ShrubberyCreationForm::operator=(const ShrubberyCreationF
 ShrubberyCreationForm::~ShrubberyCreationForm() {}
 
 void ShrubberyCreationForm::executeAction() const {
-    std::ofstream file((_target + "_shrubbery").c_str());
+    std::ofstream file((target_ + "_shrubbery").c_str());
     if (!file.is_open())
         throw std::runtime_error("Could not open file for writing");
         

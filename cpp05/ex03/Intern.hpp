@@ -1,5 +1,4 @@
-#ifndef INTERN_HPP
-#define INTERN_HPP
+#pragma once
 
 #include "AForm.hpp"
 #include <string>
@@ -13,5 +12,3 @@ public:
 
     AForm* makeForm(const std::string& formName, const std::string& target) const;
 };
-
-#endif

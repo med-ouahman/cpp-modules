@@ -1,5 +1,4 @@
-#ifndef FORM_HPP
-#define FORM_HPP
+#pragma once
 
 #include <iostream>
 #include <exception>
@@ -32,12 +31,10 @@ public:
     };
 
 private:
-    const std::string _name;
-    bool              _signed;
-    const int         _gradeToSign;
-    const int         _gradeToExec;
+    const std::string name_;
+    bool              signed_;
+    const int         signGrade_;
+    const int         execGrade_;
 };
 
 std::ostream& operator<<(std::ostream& os, const Form& f);
-
-#endif

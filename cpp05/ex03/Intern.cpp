@@ -32,6 +32,7 @@ AForm* Intern::makeForm(const std::string& formName, const std::string& target) 
         "robotomy request",
         "presidential pardon"
     };
+    
     static const FormFactory factories[3] = {
         makeShrubbery,
         makeRobotomy,

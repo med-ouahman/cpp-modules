@@ -14,7 +14,7 @@ public:
     void executeAction() const;
 
 private:
-    std::string _target;
+    std::string target_;
 };
 
 #endif
