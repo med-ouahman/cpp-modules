@@ -38,7 +38,7 @@ requested date isn't in the database, it uses the **closest earlier date**
 ## Design notes
 
 - `BitcoinExchange::parseValue` returns a status enum
-  (`VALUE_OK / VALUE_NOT_A_NUMBER / VALUE_NEGATIVE / VALUE_TOO_LARGE`) rather
+  (`OK / NaN / Negative / TooLarge`) rather
   than throwing, because `main.cpp` needs to produce three *different* error
   messages depending on what went wrong, and exceptions would make that
   three-way branching clunkier than a simple switch on a status value.

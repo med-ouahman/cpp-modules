@@ -1,9 +1,9 @@
 #include "PmergeMe.hpp"
 #include <iostream>
 #include <sys/time.h>
+#include <cstdlib>
 
-static double nowMicroseconds()
-{
+static double nowMicroseconds() {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	return static_cast<double>(tv.tv_sec) * 1000000.0 + static_cast<double>(tv.tv_usec);
@@ -11,19 +11,18 @@ static double nowMicroseconds()
 
 int main(int argc, char** argv)
 {
-	if (argc < 2)
-	{
+	if (argc < 2) {
 		std::cerr << "Error" << std::endl;
 		return 1;
 	}
 
 	std::vector<int> original;
-	try
-	{
-		original = PmergeMe::parseArguments(argc, argv);
-	}
-	catch (const std::exception&)
-	{
+	try {
+		PmergeMe::parseArguments(original,
+			argv+1,
+			static_cast<size_t>(argc - 1));
+
+	} catch (const std::exception&) {
 		std::cerr << "Error" << std::endl;
 		return 1;
 	}
@@ -36,7 +35,7 @@ int main(int argc, char** argv)
 		std::cout << " " << original[i];
 	std::cout << std::endl;
 
-	PmergeMe pm;
+	PmergeMe pm(original.size());
 
 	double vecStart = nowMicroseconds();
 	pm.sortVector(vecData);
