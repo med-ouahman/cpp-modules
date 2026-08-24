@@ -7,34 +7,92 @@
 #include <cctype>
 #include <cerrno>
 
-PmergeMe::PmergeMe() {}
-
-PmergeMe::PmergeMe(const PmergeMe& other)
-{
-	(void)other;
+PmergeMe::PmergeMe(size_t k) {
+	generateJacobsthal(k);
 }
 
-PmergeMe& PmergeMe::operator=(const PmergeMe& other)
-{
-	(void)other;
-	return *this;
-}
+PmergeMe::PmergeMe(const PmergeMe&) {}
+
+PmergeMe& PmergeMe::operator=(const PmergeMe&) { return *this; }
 
 PmergeMe::~PmergeMe() {}
 
-static bool parsePositiveInt(const std::string& token, int& out)
-{
+std::vector<size_t> PmergeMe::jacobsthalOrder(size_t k) const {
+	std::vector<size_t> jacobsthal;
+	jacobsthal.push_back(0);
+	jacobsthal.push_back(1);
+	while (jacobsthal[jacobsthal.size() - 1] < k) {
+		size_t next = jacobsthal[jacobsthal.size() - 1] +
+		2 * jacobsthal[jacobsthal.size() - 2];
+		jacobsthal.push_back(next);
+	}
+
+	std::vector<bool> used(k + 1, false);
+	if (k >= 1) used[1] = true;
+
+	std::vector<size_t> order;
+	for (size_t idx = 2; idx < jacobsthal.size(); ++idx) {
+		size_t upper = jacobsthal[idx];
+		size_t lower = jacobsthal[idx - 1];
+	
+		if (upper > k) upper = k;
+		for (size_t v = upper; v > lower; --v) {
+			if (v >= 1 && v <= k && !used[v]) {
+				order.push_back(v);
+				used[v] = true;
+			}
+		}
+	}
+
+	for (size_t v = 2; v <= k; ++v) {
+		if (!used[v]) {
+			order.push_back(v);
+			used[v] = true;
+		}
+	}
+
+	return order;
+}
+
+void PmergeMe::generateJacobsthal(size_t k) {
+	
+	jacobsthal_.clear();
+
+	jacobsthal_.reserve(k);
+	jacobsthal_.push_back(0);
+	jacobsthal_.push_back(1);
+
+	while (jacobsthal_[jacobsthal_.size() - 1] < k) {
+		size_t next = jacobsthal_[jacobsthal_.size() - 1] +
+		2 * jacobsthal_[jacobsthal_.size() - 2];
+		jacobsthal_.push_back(next);
+	}
+
+}
+
+void PmergeMe::generateOrder(std::vector<size_t>& order, size_t k) const {
+	
+	for (size_t i = 2; i < jacobsthal_.size(); ++i) {
+
+		size_t upper = std::min(k, jacobsthal_[i]);
+		size_t lower = jacobsthal_[i - 1];
+	
+		for (size_t j = upper; j > lower; --j) {			
+			order.push_back(j);
+		}
+	}
+}
+
+static bool parsePositiveInt(const std::string& token, int& out) {
 	if (token.empty())
 		return false;
 
 	size_t i = 0;
-	if (token[0] == '+')
-		i = 1;
-	if (i == token.size())
-		return false;
+	if (token[0] == '+') i = 1;
 
-	for (size_t j = i; j < token.size(); ++j)
-	{
+	if (i == token.size()) return false;
+
+	for ( size_t j = i; j < token.size(); ++j ) {
 		if (!std::isdigit(static_cast<unsigned char>(token[j])))
 			return false;
 	}
@@ -48,81 +106,33 @@ static bool parsePositiveInt(const std::string& token, int& out)
 	return true;
 }
 
-std::vector<int> PmergeMe::parseArguments(int argc, char** argv)
-{
-	std::vector<int> result;
+void PmergeMe::parseArguments(std::vector<int>& out, const char** args, size_t size) {
 
-	for (int i = 1; i < argc; ++i)
-	{
-		std::istringstream iss(argv[i]);
+	for ( size_t i = 0; i < size; ++i ) {
+		std::istringstream iss(args[i]);
 		std::string token;
-		while (iss >> token)
-		{
+		while (iss >> token) {
 			int value;
 			if (!parsePositiveInt(token, value))
 				throw std::runtime_error("invalid argument");
-			result.push_back(value);
+			out.push_back(value);
 		}
 	}
 
-	if (result.empty())
+	if (out.empty())
 		throw std::runtime_error("no arguments");
-
-	return result;
 }
 
-std::vector<size_t> PmergeMe::jacobsthalOrder(size_t k) const
-{
-	std::vector<size_t> jacobsthal;
-	jacobsthal.push_back(0);
-	jacobsthal.push_back(1);
-	while (jacobsthal[jacobsthal.size() - 1] < k)
-	{
-		size_t next = jacobsthal[jacobsthal.size() - 1] + 2 * jacobsthal[jacobsthal.size() - 2];
-		jacobsthal.push_back(next);
-	}
+void PmergeMe::mergeInsertVector(std::vector<int>& vec) const {
 
-	std::vector<bool> used(k + 1, false);
-	if (k >= 1)
-		used[1] = true;
-
-	std::vector<size_t> order;
-	for (size_t idx = 2; idx < jacobsthal.size(); ++idx)
-	{
-		size_t upper = jacobsthal[idx];
-		size_t lower = jacobsthal[idx - 1];
-		if (upper > k)
-			upper = k;
-		for (size_t v = upper; v > lower; --v)
-		{
-			if (v >= 1 && v <= k && !used[v])
-			{
-				order.push_back(v);
-				used[v] = true;
-			}
-		}
-	}
-	for (size_t v = 2; v <= k; ++v)
-	{
-		if (!used[v])
-		{
-			order.push_back(v);
-			used[v] = true;
-		}
-	}
-	return order;
-}
-
-void PmergeMe::mergeInsertVector(std::vector<int>& vec) const
-{
 	size_t n = vec.size();
-	if (n <= 1)
-		return;
 
+	if (n <= 1) return;
+	
 	bool hasOdd = (n % 2 == 1);
 	int oddValue = 0;
-	if (hasOdd)
-	{
+
+	if (hasOdd) {
 		oddValue = vec.back();
 		vec.pop_back();
 		n--;
@@ -135,13 +145,10 @@ void PmergeMe::mergeInsertVector(std::vector<int>& vec) const
 	for (size_t i = 0; i < pairCount; ++i) {
 		int first = vec[2 * i];
 		int second = vec[2 * i + 1];
-		if (first > second)
-		{
+		if (first > second) {
 			larges[i] = first;
 			smalls[i] = second;
-		}
-		else
-		{
+		} else {
 			larges[i] = second;
 			smalls[i] = first;
 		}
@@ -164,11 +171,14 @@ void PmergeMe::mergeInsertVector(std::vector<int>& vec) const
 	}
 
 	size_t idx0 = rankOrder[0];
-	std::vector<int> chain(larges);
+	std::vector<int>& chain = larges;
 	chain.insert(chain.begin(), smalls[idx0]);
 
-	std::vector<size_t> insertOrder = jacobsthalOrder(pairCount);
-	for (size_t i = 0; i < insertOrder.size(); ++i) {
+	std::vector<size_t> insertOrder;
+	insertOrder.reserve(pairCount);
+	generateOrder(insertOrder, insertOrder.capacity());
+	
+	for ( size_t i = 0; i < insertOrder.size(); ++i ) {
 		size_t rank = insertOrder[i];
 		size_t origIdx = rankOrder[rank - 1];
 		int largeValue = originalLarges[origIdx];
@@ -185,16 +195,14 @@ void PmergeMe::mergeInsertVector(std::vector<int>& vec) const
 	vec = chain;
 }
 
-void PmergeMe::mergeInsertDeque(std::deque<int>& deq) const
-{
+void PmergeMe::mergeInsertDeque(std::deque<int>& deq) const {
 	size_t n = deq.size();
-	if (n <= 1)
-		return;
+
+	if (n <= 1) return;
 
 	bool hasOdd = (n % 2 == 1);
 	int oddValue = 0;
-	if (hasOdd)
-	{
+	if (hasOdd) {
 		oddValue = deq.back();
 		deq.pop_back();
 		n--;
@@ -204,17 +212,13 @@ void PmergeMe::mergeInsertDeque(std::deque<int>& deq) const
 	std::deque<int> smalls(pairCount);
 	std::deque<int> larges(pairCount);
 
-	for (size_t i = 0; i < pairCount; ++i)
-	{
+	for (size_t i = 0; i < pairCount; ++i) {
 		int first = deq[2 * i];
 		int second = deq[2 * i + 1];
-		if (first > second)
-		{
+		if (first > second) {
 			larges[i] = first;
 			smalls[i] = second;
-		}
-		else
-		{
+		} else {
 			larges[i] = second;
 			smalls[i] = first;
 		}
@@ -237,12 +241,13 @@ void PmergeMe::mergeInsertDeque(std::deque<int>& deq) const
 	}
 
 	size_t idx0 = rankOrder[0];
-	std::deque<int> chain(larges);
+	std::deque<int>& chain = larges;
 	chain.insert(chain.begin(), smalls[idx0]);
 
-	std::vector<size_t> insertOrder = jacobsthalOrder(pairCount);
-	for (size_t i = 0; i < insertOrder.size(); ++i)
-	{
+	std::vector<size_t> insertOrder;
+	insertOrder.reserve(pairCount);
+	generateOrder(insertOrder, insertOrder.capacity());
+	for (size_t i = 0; i < insertOrder.size(); ++i) {
 		size_t rank = insertOrder[i];
 		size_t origIdx = rankOrder[rank - 1];
 		int largeValue = originalLarges[origIdx];
@@ -251,8 +256,7 @@ void PmergeMe::mergeInsertDeque(std::deque<int>& deq) const
 		chain.insert(insertPos, smalls[origIdx]);
 	}
 
-	if (hasOdd)
-	{
+	if (hasOdd) {
 		std::deque<int>::iterator insertPos = std::lower_bound(chain.begin(), chain.end(), oddValue);
 		chain.insert(insertPos, oddValue);
 	}
@@ -260,12 +264,10 @@ void PmergeMe::mergeInsertDeque(std::deque<int>& deq) const
 	deq = chain;
 }
 
-void PmergeMe::sortVector(std::vector<int>& vec) const
-{
+void PmergeMe::sortVector(std::vector<int>& vec) const {
 	mergeInsertVector(vec);
 }
 
-void PmergeMe::sortDeque(std::deque<int>& deq) const
-{
+void PmergeMe::sortDeque(std::deque<int>& deq) const {
 	mergeInsertDeque(deq);
 }

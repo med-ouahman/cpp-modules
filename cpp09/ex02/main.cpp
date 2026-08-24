@@ -2,15 +2,23 @@
 #include <iostream>
 #include <sys/time.h>
 
-static double nowMicroseconds()
-{
+static double nowMicroseconds() {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	return static_cast<double>(tv.tv_sec) * 1000000.0 + static_cast<double>(tv.tv_usec);
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
+
+	while (true) {
+		break;
+		size_t n;
+		std::cout << "N: ";
+
+		std::cin >> n;
+		PmergeMe x(n);
+	}
+
 	if (argc < 2)
 	{
 		std::cerr << "Error" << std::endl;
@@ -18,12 +26,10 @@ int main(int argc, char** argv)
 	}
 
 	std::vector<int> original;
-	try
-	{
-		original = PmergeMe::parseArguments(argc, argv);
-	}
-	catch (const std::exception&)
-	{
+	try {
+		PmergeMe::parseArguments(original, const_cast<const char**>(argv + 1), argc - 1);
+
+	} catch (const std::exception&) {
 		std::cerr << "Error" << std::endl;
 		return 1;
 	}
@@ -36,7 +42,7 @@ int main(int argc, char** argv)
 		std::cout << " " << original[i];
 	std::cout << std::endl;
 
-	PmergeMe pm;
+	PmergeMe pm(original.size());
 
 	double vecStart = nowMicroseconds();
 	pm.sortVector(vecData);
@@ -47,12 +53,12 @@ int main(int argc, char** argv)
 	double dequeEnd = nowMicroseconds();
 
 	std::cout << "After:";
-	for (size_t i = 0; i < vecData.size(); ++i)
+	for ( size_t i = 0; i < vecData.size(); ++i )
 		std::cout << " " << vecData[i];
 	std::cout << std::endl;
 
 	std::cout.setf(std::ios::fixed);
-	std::cout.precision(5);
+	std::cout.precision(2);
 
 	std::cout << "Time to process a range of " << original.size()
 		<< " elements with std::vector : " << (vecEnd - vecStart) << " us" << std::endl;
